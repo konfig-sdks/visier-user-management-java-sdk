@@ -1,0 +1,2768 @@
+openapi: 3.0.3
+info:
+  description: Visier APIs for managing users within an organization
+  license:
+    name: "Apache License, Version 2.0"
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  title: Visier User Management APIs
+  version: 22222222.99201.1200
+  x-api-status-urls: false
+  x-konfig-ignore:
+    object-with-no-properties: true
+  x-konfig-has-globally-required-security: true
+servers:
+- url: "https://{vanity-name}.api.visier.io"
+  variables:
+    vanity-name:
+      default: vanity
+security:
+- ApiKeyAuth: []
+  BearerAuth: []
+- ApiKeyAuth: []
+  CookieAuth: []
+- ApiKeyAuth: []
+  OAuth2Auth: []
+tags:
+- description: |-
+    Use these APIs to manage users within an organization.
+
+     <br>**Tip**: Visier recommends that administrating tenant users focus primarily on managing users at the administrating
+     tenant level. These users likely belong directly to your organization, such as customer support, customer value
+     managers, account executives, and customer success. These users work with clients to manage their day-to-day
+     solution needs.
+  name: UserManagement
+- description: |-
+    Use these APIs to manage users within an organization.
+
+     <br>**Note:** <em>These are version 2 of the User Management APIs and are released in **limited availability**.
+     If you are interested in using them, please contact your Customer Success Manager (CSM).</em>
+
+     <br>**Tip:** Visier recommends that administrating tenant users focus primarily on managing users at the administrating
+     tenant level. These users likely belong directly to your organization, such as customer support, customer value
+     managers, account executives, and customer success. These users work with clients to manage their day-to-day
+     solution needs.
+  name: UserManagementV2
+paths:
+  /v1/admin/permissions/users:
+    delete:
+      description: |-
+        This API allows you to remove a permission from specific users. Administrating tenant users can remove permissions
+         from users in the administrating tenant and in the analytic tenants those users belong to.
+      operationId: UserManagement_RemovePermissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRevokePermissionsRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignRevokePermissionsResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Remove permissions from users
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v1-admin-permissions-users
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: |-
+        This API allows you to assign a permission to specific users. Administrating tenant users can assign permissions
+         to users in the administrating tenant and in the analytic tenants those users belong to.
+      operationId: UserManagement_AssignPermissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRevokePermissionsRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignRevokePermissionsResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Assign permissions to users
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v1-admin-permissions-users
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/permissions/{permissionId}/users:
+    get:
+      description: |-
+        This API allows you to retrieve all the users that are assigned a specified permission. You must know the ID
+         of the permission you want to retrieve users for.
+      operationId: UserManagement_GetPermissionAssignedUsers
+      parameters:
+      - description: The unique identifier of the permission you want to retrieve
+          users for.
+        explode: false
+        in: path
+        name: permissionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: |-
+          If true, the response returns a list of all users that are assigned the permission, including users that are
+           assigned the permission through a user group.
+          If false, the response returns a list of the users that are directly assigned the permission.
+        explode: true
+        in: query
+        name: includeUserGroups
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Specify the tenant to retrieve the list of users from.
+        explode: true
+        in: query
+        name: tenantFilter
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The number of results to return. The maximum number of tenants
+          to retrieve is 100.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: "The index to start retrieving results from, also known as offset.\
+          \ The index begins at 0."
+        explode: true
+        in: query
+        name: start
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionAssignedUsersDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve users that are assigned a specific permission
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-permissions-permissionId-users
+      x-accepts: application/json
+  /v1/admin/user-groups:
+    get:
+      description: This API allows you to retrieve the full list of user groups in
+        a tenant.
+      operationId: UserManagement_GetAllUserGroups
+      parameters:
+      - description: Specify the tenant to retrieve the list of user groups from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The number of results to return. The maximum number of users
+          to retrieve is 1000.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: uint32
+          type: integer
+        style: form
+      - description: "The index to start retrieving results from, also known as offset."
+        explode: true
+        in: query
+        name: start
+        required: false
+        schema:
+          format: uint32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupsGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a list of all user groups
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-user-groups
+      x-accepts: application/json
+  /v1/admin/user-groups/permissions:
+    delete:
+      description: This API allows you to remove a permission from specific user groups.
+      operationId: UserManagement_RevokePermissionsFromUserGroups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionsToUserGroupsRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionsToUserGroupForTenantDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Remove permissions from user groups
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v1-admin-user-groups-permissions
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: This API allows you to assign a permission to specific user groups.
+        This assigns the permission to all users in the user group.
+      operationId: UserManagement_AssignPermissionsToUserGroups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionsToUserGroupsRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionsToUserGroupForTenantDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Assign permissions to user groups
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v1-admin-user-groups-permissions
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/user-groups/users:
+    delete:
+      description: This API allows you to remove users from specific user groups.
+      operationId: UserManagement_RemoveUsersFromUserGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersToUserGroupsRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityAssignmentResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Remove users from user groups
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v1-admin-user-groups-users
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: This API allows you to assign users to specific user groups.
+      operationId: UserManagement_AddUsersToUserGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersToUserGroupsRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityAssignmentResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Assign users to user groups
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v1-admin-user-groups-users
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/user-groups/{userGroupId}/users:
+    get:
+      description: |-
+        This API allows you to retrieve the list of users explicitly assigned to a user group. Users that are implicitly
+         included in the user group through the user group's dynamic filters are not returned by this endpoint.
+      operationId: UserManagement_GetUserGroupUsers
+      parameters:
+      - description: The ID of user group.
+        explode: false
+        in: path
+        name: userGroupId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Specifies the tenant to retrieve the list of users from.
+        explode: true
+        in: query
+        name: tenantFilter
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: The number of results to return. The maximum number of tenants
+          to retrieve is 100.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: uint32
+          type: integer
+        style: form
+      - description: "The index to start retrieving results from, also known as offset.\
+          \ The index begins at 0."
+        explode: true
+        in: query
+        name: start
+        required: false
+        schema:
+          format: uint32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupsUsersDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a list of user group users
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-user-groups-userGroupId-users
+      x-accepts: application/json
+  /v1/admin/users:
+    get:
+      description: This API allows you to retrieve the full list of users and their
+        current states.
+      operationId: UserManagement_GetAllUsers
+      parameters:
+      - description: Specify the tenant to retrieve a list of users from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "If true, the response returns a list of the user's assigned\
+          \ profiles."
+        explode: true
+        in: query
+        name: assignedProfiles
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "If true, the response returns the user's assigned permissions."
+        explode: true
+        in: query
+        name: assignedPermissions
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "If true, the response returns the user's assigned user groups."
+        explode: true
+        in: query
+        name: assignedUserGroups
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: The number of results to return. The maximum number of users
+          to retrieve is 1000.
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: uint32
+          type: integer
+        style: form
+      - description: "The index to start retrieving results from, also known as offset.\
+          \ The index begins at 0."
+        explode: true
+        in: query
+        name: start
+        required: false
+        schema:
+          format: uint32
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllUsersGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a list of all users
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users
+      x-accepts: application/json
+    post:
+      description: This API allows you to create a new user. Administrating tenant
+        users can specify the tenant in which to add a user.
+      operationId: UserManagement_AddUser
+      parameters:
+      - description: Specify the tenant to create a user in.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationAPIRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreationAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Add a user
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v1-admin-users
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/users/{userId}:
+    delete:
+      description: This API allows you to delete an existing user. Administrating
+        tenant users can specify the tenant from which to delete a user.
+      operationId: UserManagement_DeleteUser
+      parameters:
+      - description: The ID of the user you want to delete.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Specify the tenant to delete a user in.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUserResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Delete a user
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v1-admin-users-userId
+      x-accepts: application/json
+    get:
+      description: This API allows you to retrieve all details for a specified user.
+      operationId: UserManagement_GetUserDetail
+      parameters:
+      - description: The ID of the user you want to retrieve.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Specify the tenant to retrieve a user from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "If true, the response returns a list of the user's assigned\
+          \ profiles."
+        explode: true
+        in: query
+        name: assignedProfiles
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "If true, the response returns the user's assigned permissions."
+        explode: true
+        in: query
+        name: assignedPermissions
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "If true, the response returns the user's assigned user groups."
+        explode: true
+        in: query
+        name: assignedUserGroups
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a user's details
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId
+      x-accepts: application/json
+    put:
+      description: "This API allows you to update an existing user's information,\
+        \ such as their display name or if the user is enabled in Visier."
+      operationId: UserManagement_UpdateUser
+      parameters:
+      - description: The ID of the user you want to update.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Specify the tenant to update a user in.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateAPIRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdateAPIRequestDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Update a user
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v1-admin-users-userId
+      x-content-type: application/json
+      x-accepts: application/json
+  /v2/admin/users:
+    delete:
+      description: |-
+        This API allows you to delete an existing user. Administrating tenant users can specify the tenant from which to delete a user.
+
+         <br>**Note:** <em>This API is in **limited availability**. If you are interested in using it, please contact your Customer Success Manager (CSM).</em>
+      operationId: UserManagementV2_DeleteUsers
+      parameters:
+      - description: Specify the tenant to delete a user in.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersDeleteAPIRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Delete users
+      tags:
+      - UserManagementV2
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v2-admin-users
+      x-content-type: application/json
+      x-accepts: application/json
+    post:
+      description: |-
+        This API allows you to create new users. Administrating tenant users can specify the tenant in which to add these users.
+
+         <br>**Note:** <em>This API is in **limited availability**. If you are interested in using it, please contact your Customer Success Manager (CSM).</em>
+      operationId: UserManagementV2_AddUsers
+      parameters:
+      - description: Specify the tenant to create a user in.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersCreationAPIRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Add users
+      tags:
+      - UserManagementV2
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--v2-admin-users
+      x-content-type: application/json
+      x-accepts: application/json
+    put:
+      description: |-
+        This API allows you to update an existing user's information, such as their display name or if the user is enabled in Visier.
+
+         <br>**Note:** <em>This API is in **limited availability**. If you are interested in using it, please contact your Customer Success Manager (CSM).</em>
+      operationId: UserManagementV2_UpdateUsers
+      parameters:
+      - description: Specify the tenant to update a user in.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersUpdateAPIRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Update users
+      tags:
+      - UserManagementV2
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v2-admin-users
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/users/reports/application-logs:
+    get:
+      description: |-
+        This API allows you to export the Application Logs for a tenant. The Application Logs track information about your
+         users and how they are using the application. Performing regular audits will help you identify potential security
+         issues and keep your data safe. As part of user management, download the Application Logs to monitor user activity
+         and logon events to ensure your users are performing authorized activities.
+
+         Administrating tenant users can export application logs for the administrating tenant and the analytic tenants
+         those users belong to.
+      operationId: UserManagement_GetApplicationLogsXLSX
+      parameters:
+      - description: An inclusive date-time to start retrieving Application Logs from.
+        explode: true
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: An exclusive date-time to stop retrieving Application Logs from.
+        explode: true
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Specify the tenant to retrieve Application Logs from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.ms-excel:
+              schema:
+                $ref: '#/components/schemas/UserManagementGetApplicationLogsXlsxResponse'
+          description: An XLSX file.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve the Application Logs
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-application-logs
+      x-accepts: application/json
+  /v1/admin/users/{userId}/reports/data-security:
+    get:
+      description: |-
+        This API allows you to export the data security report of a user. The Data Security Report provides information
+         about a specific user to see which populations and properties that user has access to as a result of the
+         permissions assigned to them.
+
+         Administrating tenant users can export the report for users in the administrating tenant and the analytic
+         tenants those users belong to.
+      operationId: UserManagement_GetDataSecurityReportXLSX
+      parameters:
+      - description: The ID of the user to retrieve the report for.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Specify the tenant to retrieve the Data Security Report from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.ms-excel:
+              schema:
+                $ref: '#/components/schemas/UserManagementGetDataSecurityReportXlsxResponse'
+          description: An XLSX file.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve the Data Security Report
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId-reports-data-security
+      x-accepts: application/json
+  /v1/admin/users/reports/profile-assignments:
+    get:
+      description: |-
+        This API allows you to export the profiles assigned to each user. This report details the profiles assigned to
+         each user and the profile validity period.
+
+         Administrating tenant users can export profile assignments for the administrating tenant and the analytic tenants
+         those users belong to.
+      operationId: UserManagement_GetProfileAssignmentsXLSX
+      parameters:
+      - description: Specify the tenant to retrieve profile assignments from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.ms-excel:
+              schema:
+                $ref: '#/components/schemas/UserManagementGetProfileAssignmentsXlsxResponse'
+          description: An XLSX file.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve user profile assignments in XLSX format
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-profile-assignments
+      x-accepts: application/json
+  /v1/admin/users/reports/permission-assignments:
+    get:
+      description: |-
+        This API allows you to export the user permission assignments for a tenant. The permission assignments report
+         provides a summary of the permissions your users have been assigned and how each permission is being used across
+         your user base, as well as the users that do not have any permissions assigned to them.
+
+         Administrating tenant users can export permission assignments for the administrating tenant and the analytic
+         tenants those users belong to.
+      operationId: UserManagement_GetUserPermissionsXLSX
+      parameters:
+      - description: Specify the tenant to retrieve the permission assignments report
+          from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.ms-excel:
+              schema:
+                $ref: '#/components/schemas/UserManagementGetUserPermissionsXlsxResponse'
+          description: An XLSX file.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve user permissions in XLSX format
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-permission-assignments
+      x-accepts: application/json
+  /v1/admin/users/reports/permissions-list:
+    get:
+      description: |-
+        This API allows you to export the list of permissions in a tenant. This report includes the permission name,
+         permission description, and permission ID for all permissions in the tenant.
+
+         Administrating tenant users can export permissions lists for the administrating tenant and the analytic tenants
+         those users belong to.
+      operationId: UserManagement_GetAllPermissionsXLSX
+      parameters:
+      - description: Specify the tenant to retrieve permissions from.
+        explode: true
+        in: query
+        name: tenantCode
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.ms-excel:
+              schema:
+                $ref: '#/components/schemas/UserManagementGetAllPermissionsXlsxResponse'
+          description: An XLSX file.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a list of all permissions in XLSX format
+      tags:
+      - UserManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-permissions-list
+      x-accepts: application/json
+components:
+  schemas:
+    AdditionalCapabilitiesDTO:
+      example:
+        additionalCapabilities:
+        - additionalCapabilities
+        - additionalCapabilities
+      properties:
+        additionalCapabilities:
+          description: The additional capabilities assigned to this profile.
+          items:
+            type: string
+          type: array
+      type: object
+    AllPermissionsAssignedForLocalTenantDTO:
+      example:
+        assignedPermissions:
+        - permissionId: permissionId
+          displayName: displayName
+          description: description
+        - permissionId: permissionId
+          displayName: displayName
+          description: description
+      properties:
+        assignedPermissions:
+          description: A list of objects representing the user's permissions.
+          items:
+            $ref: '#/components/schemas/PermissionAssignedForLocalTenantDTO'
+          type: array
+      type: object
+    AllProfileAssignedForLocalTenantDTO:
+      example:
+        assignedProfiles:
+        - capabilities:
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          profileId: profileId
+          displayName: displayName
+          validityEndTime: validityEndTime
+          validityStartTime: validityStartTime
+          additionalCapabilities:
+            additionalCapabilities:
+            - additionalCapabilities
+            - additionalCapabilities
+        - capabilities:
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          profileId: profileId
+          displayName: displayName
+          validityEndTime: validityEndTime
+          validityStartTime: validityStartTime
+          additionalCapabilities:
+            additionalCapabilities:
+            - additionalCapabilities
+            - additionalCapabilities
+      properties:
+        assignedProfiles:
+          description: A list of objects representing the user profiles assigned to
+            the user and their validity range.
+          items:
+            $ref: '#/components/schemas/ProfileAssignedForLocalTenantDTO'
+          type: array
+      type: object
+    AllUserGroupsAssignedForLocalTenantDTO:
+      example:
+        assignedUserGroups:
+        - userGroupId: userGroupId
+          displayName: displayName
+        - userGroupId: userGroupId
+          displayName: displayName
+      properties:
+        assignedUserGroups:
+          description: A list of objects representing the available user groups.
+          items:
+            $ref: '#/components/schemas/UserGroupAssignedForLocalTenantDTO'
+          type: array
+      type: object
+    AllUsersGetAPIResponseDTO:
+      example:
+        limit: 0
+        start: 6
+        users:
+        - userGroups:
+            assignedUserGroups:
+            - userGroupId: userGroupId
+              displayName: displayName
+            - userGroupId: userGroupId
+              displayName: displayName
+          lastLogin:
+            timestamp: timestamp
+          displayName: displayName
+          permissions:
+            assignedPermissions:
+            - permissionId: permissionId
+              displayName: displayName
+              description: description
+            - permissionId: permissionId
+              displayName: displayName
+              description: description
+          profiles:
+            assignedProfiles:
+            - capabilities:
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              profileId: profileId
+              displayName: displayName
+              validityEndTime: validityEndTime
+              validityStartTime: validityStartTime
+              additionalCapabilities:
+                additionalCapabilities:
+                - additionalCapabilities
+                - additionalCapabilities
+            - capabilities:
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              profileId: profileId
+              displayName: displayName
+              validityEndTime: validityEndTime
+              validityStartTime: validityStartTime
+              additionalCapabilities:
+                additionalCapabilities:
+                - additionalCapabilities
+                - additionalCapabilities
+          employeeId: employeeId
+          userId: userId
+          accountEnabled: true
+          email: email
+          username: username
+        - userGroups:
+            assignedUserGroups:
+            - userGroupId: userGroupId
+              displayName: displayName
+            - userGroupId: userGroupId
+              displayName: displayName
+          lastLogin:
+            timestamp: timestamp
+          displayName: displayName
+          permissions:
+            assignedPermissions:
+            - permissionId: permissionId
+              displayName: displayName
+              description: description
+            - permissionId: permissionId
+              displayName: displayName
+              description: description
+          profiles:
+            assignedProfiles:
+            - capabilities:
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              profileId: profileId
+              displayName: displayName
+              validityEndTime: validityEndTime
+              validityStartTime: validityStartTime
+              additionalCapabilities:
+                additionalCapabilities:
+                - additionalCapabilities
+                - additionalCapabilities
+            - capabilities:
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              - capability: capability
+                accessLevel: accessLevel
+                viewLevel: viewLevel
+              profileId: profileId
+              displayName: displayName
+              validityEndTime: validityEndTime
+              validityStartTime: validityStartTime
+              additionalCapabilities:
+                additionalCapabilities:
+                - additionalCapabilities
+                - additionalCapabilities
+          employeeId: employeeId
+          userId: userId
+          accountEnabled: true
+          email: email
+          username: username
+      properties:
+        users:
+          description: A list of available users.
+          items:
+            $ref: '#/components/schemas/UserGetAPIResponseDTO'
+          type: array
+        limit:
+          description: The number of results to return. The maximum number of users
+            to retrieve is 1000.
+          format: uint32
+          type: integer
+        start:
+          description: "The index to start retrieving results from, also known as\
+            \ offset. The index begins at 0."
+          format: uint32
+          type: integer
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    AssignRevokePermissionByPermissionDTO:
+      description: The results of the permission assignment or removal.
+      example:
+        permission:
+          permissionId: permissionId
+          displayName: displayName
+          description: description
+        users:
+        - message: message
+          userId: userId
+          username: username
+        - message: message
+          userId: userId
+          username: username
+      properties:
+        permission:
+          $ref: '#/components/schemas/PermissionAssignedForLocalTenantDTO'
+        users:
+          description: A list of objects representing the users that was permission
+            was assigned to or removed from.
+          items:
+            $ref: '#/components/schemas/AssignRevokePermissionByUserDTO'
+          type: array
+      type: object
+    AssignRevokePermissionByTenantDTO:
+      description: The permissions organized by tenant.
+      example:
+        permissions:
+        - permission:
+            permissionId: permissionId
+            displayName: displayName
+            description: description
+          users:
+          - message: message
+            userId: userId
+            username: username
+          - message: message
+            userId: userId
+            username: username
+        - permission:
+            permissionId: permissionId
+            displayName: displayName
+            description: description
+          users:
+          - message: message
+            userId: userId
+            username: username
+          - message: message
+            userId: userId
+            username: username
+        tenantCode: tenantCode
+        message: message
+        status: Unknown
+      properties:
+        tenantCode:
+          description: The unique identifier associated with the tenant.
+          type: string
+        permissions:
+          description: A list of objects representing the assigned or removed permissions.
+          items:
+            $ref: '#/components/schemas/AssignRevokePermissionByPermissionDTO'
+          type: array
+        status:
+          description: The state of the permission assignment. Valid values are Succeed
+            or Failed.
+          enum:
+          - Unknown
+          - Succeed
+          - Failed
+          format: enum
+          type: string
+        message:
+          description: "A detailed description of the request outcome, if available."
+          type: string
+      type: object
+    AssignRevokePermissionByUserDTO:
+      description: The results of the permission assignment or removal by user.
+      example:
+        message: message
+        userId: userId
+        username: username
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@visier.com."
+          type: string
+        message:
+          description: A meaningful message about the user permission.
+          type: string
+      type: object
+    AssignRevokePermissionsRequest:
+      example:
+        permissions:
+        - permissionId: permissionId
+          userIds:
+          - userIds
+          - userIds
+        - permissionId: permissionId
+          userIds:
+          - userIds
+          - userIds
+      properties:
+        permissions:
+          description: A list of objects representing the permissions to assign to
+            or remove from users.
+          items:
+            $ref: '#/components/schemas/Permission'
+          type: array
+      type: object
+    AssignRevokePermissionsResponseDTO:
+      description: The results of the permission assignment or removal.
+      example:
+        tenants:
+        - permissions:
+          - permission:
+              permissionId: permissionId
+              displayName: displayName
+              description: description
+            users:
+            - message: message
+              userId: userId
+              username: username
+            - message: message
+              userId: userId
+              username: username
+          - permission:
+              permissionId: permissionId
+              displayName: displayName
+              description: description
+            users:
+            - message: message
+              userId: userId
+              username: username
+            - message: message
+              userId: userId
+              username: username
+          tenantCode: tenantCode
+          message: message
+          status: Unknown
+        - permissions:
+          - permission:
+              permissionId: permissionId
+              displayName: displayName
+              description: description
+            users:
+            - message: message
+              userId: userId
+              username: username
+            - message: message
+              userId: userId
+              username: username
+          - permission:
+              permissionId: permissionId
+              displayName: displayName
+              description: description
+            users:
+            - message: message
+              userId: userId
+              username: username
+            - message: message
+              userId: userId
+              username: username
+          tenantCode: tenantCode
+          message: message
+          status: Unknown
+      properties:
+        tenants:
+          description: "A list of objects representing the users that were assigned\
+            \ permissions, organized by the tenants the users belong to."
+          items:
+            $ref: '#/components/schemas/AssignRevokePermissionByTenantDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    CapabilitiesDTO:
+      example:
+        capability: capability
+        accessLevel: accessLevel
+        viewLevel: viewLevel
+      properties:
+        capability:
+          description: The name of the capability.
+          type: string
+        accessLevel:
+          description: The access level of the profile for the given capability.
+          type: string
+        viewLevel:
+          description: The view level of the profile for the given capability.
+          type: string
+      type: object
+    DeleteUserResponse:
+      properties: {}
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    GoogleProtobufAny:
+      additionalProperties: true
+      description: Contains an arbitrary serialized message along with a @type that
+        describes the type of the serialized message.
+      properties:
+        '@type':
+          description: The type of the serialized message.
+          type: string
+      type: object
+    LastLoginDTO:
+      example:
+        timestamp: timestamp
+      properties:
+        timestamp:
+          description: The time that the user last logged into Visier.
+          type: string
+      type: object
+    Permission:
+      example:
+        permissionId: permissionId
+        userIds:
+        - userIds
+        - userIds
+      properties:
+        permissionId:
+          description: The unique identifier associated with a permission.
+          type: string
+        userIds:
+          description: A list of strings representing unique user IDs.
+          items:
+            type: string
+          type: array
+      type: object
+    PermissionAssignedByTenantDTO:
+      description: "The users assigned a specific permission, grouped by tenant."
+      example:
+        tenantCode: tenantCode
+        users:
+        - permissionFrom: permissionFrom
+          userId: userId
+          username: username
+        - permissionFrom: permissionFrom
+          userId: userId
+          username: username
+      properties:
+        tenantCode:
+          description: The unique identifier associated with the tenant.
+          type: string
+        users:
+          description: A list of objects representing the users that the permission
+            is assigned to.
+          items:
+            $ref: '#/components/schemas/PermissionAssignedUserDTO'
+          type: array
+      type: object
+    PermissionAssignedForLocalTenantDTO:
+      example:
+        permissionId: permissionId
+        displayName: displayName
+        description: description
+      properties:
+        description:
+          description: A user-defined description of the permission.
+          type: string
+        permissionId:
+          description: The unique identifier associated with the permission.
+          type: string
+        displayName:
+          description: "An identifiable permission name to display in Visier, such\
+            \ as \"Diversity Access\"."
+          type: string
+      type: object
+    PermissionAssignedUserDTO:
+      description: The user and the method through which the user was assigned the
+        permission.
+      example:
+        permissionFrom: permissionFrom
+        userId: userId
+        username: username
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@visier.com."
+          type: string
+        permissionFrom:
+          description: |-
+            The method through which the user was assigned the permission. The permission may be assigned through
+             the following options:
+              - User: The permission was directly assigned to the user.
+              - UserGroup: The permission was assigned because the user belongs to a user group that is assigned the permission.
+              - UserAndUserGroup: The permission was directly assigned to the user and assigned because the user belongs to
+                a user group that is assigned the permission.
+          type: string
+      type: object
+    PermissionAssignedUsersDTO:
+      description: Users that are assigned a specific permission.
+      example:
+        tenants:
+        - tenantCode: tenantCode
+          users:
+          - permissionFrom: permissionFrom
+            userId: userId
+            username: username
+          - permissionFrom: permissionFrom
+            userId: userId
+            username: username
+        - tenantCode: tenantCode
+          users:
+          - permissionFrom: permissionFrom
+            userId: userId
+            username: username
+          - permissionFrom: permissionFrom
+            userId: userId
+            username: username
+        limit: 0
+        start: 6
+      properties:
+        tenants:
+          description: "A list of objects representing the users that are assigned\
+            \ the specific permission, organized by the tenants the users belong to."
+          items:
+            $ref: '#/components/schemas/PermissionAssignedByTenantDTO'
+          type: array
+        limit:
+          description: The number of results to return. The maximum number of tenants
+            to retrieve is 100.
+          format: uint32
+          type: integer
+        start:
+          description: "The index to start retrieving results from, also known as\
+            \ offset. The index begins at 0."
+          format: uint32
+          type: integer
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    PermissionResponseDTO:
+      example:
+        permissionId: permissionId
+        displayName: displayName
+      properties:
+        permissionId:
+          description: The unique identifier associated with the permission.
+          type: string
+        displayName:
+          description: "An identifiable permission name to display in Visier, such\
+            \ as \"Diversity Access\"."
+          type: string
+      type: object
+    PermissionsToUserGroupForTenantDTO:
+      example:
+        userGroups:
+        - userGroupId: userGroupId
+          displayName: displayName
+          permissions:
+          - permissionId: permissionId
+            displayName: displayName
+          - permissionId: permissionId
+            displayName: displayName
+        - userGroupId: userGroupId
+          displayName: displayName
+          permissions:
+          - permissionId: permissionId
+            displayName: displayName
+          - permissionId: permissionId
+            displayName: displayName
+        tenantCode: tenantCode
+        message: message
+        status: status
+      properties:
+        tenantCode:
+          description: The unique identifier associated with the tenant.
+          type: string
+        status:
+          description: The state of the permission assignment or removal. Valid values
+            are Succeed or Failed.
+          type: string
+        message:
+          description: "A detailed description of the request outcome, if available."
+          type: string
+        userGroups:
+          description: A list of objects representing user groups and the permissions
+            to assign to or remove from them.
+          items:
+            $ref: '#/components/schemas/UserGroupGetAPIResponseDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    PermissionsToUserGroupRequestDTO:
+      example:
+        userGroupId: userGroupId
+        permissionsIds:
+        - permissionsIds
+        - permissionsIds
+      properties:
+        userGroupId:
+          description: The unique identifier associated with the user group.
+          type: string
+        permissionsIds:
+          description: A list of strings representing the unique permission IDs to
+            assign.
+          items:
+            type: string
+          type: array
+      type: object
+    PermissionsToUserGroupsRequestDTO:
+      example:
+        userGroups:
+        - userGroupId: userGroupId
+          permissionsIds:
+          - permissionsIds
+          - permissionsIds
+        - userGroupId: userGroupId
+          permissionsIds:
+          - permissionsIds
+          - permissionsIds
+      properties:
+        userGroups:
+          description: A list of objects representing the user groups and permissions
+            to assign or remove.
+          items:
+            $ref: '#/components/schemas/PermissionsToUserGroupRequestDTO'
+          type: array
+      type: object
+    ProfileAssignedForLocalTenantDTO:
+      example:
+        capabilities:
+        - capability: capability
+          accessLevel: accessLevel
+          viewLevel: viewLevel
+        - capability: capability
+          accessLevel: accessLevel
+          viewLevel: viewLevel
+        profileId: profileId
+        displayName: displayName
+        validityEndTime: validityEndTime
+        validityStartTime: validityStartTime
+        additionalCapabilities:
+          additionalCapabilities:
+          - additionalCapabilities
+          - additionalCapabilities
+      properties:
+        profileId:
+          description: The unique identifier associated with the profile.
+          type: string
+        displayName:
+          description: "An identifiable profile name to display in Visier, such as\
+            \ \"Partner Service Manager\"."
+          type: string
+        validityStartTime:
+          description: An inclusive date-time when this profile is active.
+          type: string
+        validityEndTime:
+          description: An exclusive date-time when this profile is no longer active.
+          type: string
+        capabilities:
+          description: A list of objects representing the access that this profile
+            has for the capabilities of this profile.
+          items:
+            $ref: '#/components/schemas/CapabilitiesDTO'
+          type: array
+        additionalCapabilities:
+          $ref: '#/components/schemas/AdditionalCapabilitiesDTO'
+      type: object
+      x-konfig-properties:
+        additionalCapabilities:
+          description: A list of the additional capabilities that are assigned to
+            this profile.
+    SecurityAssignmentResponseDTO:
+      example:
+        tenants:
+        - assignments:
+          - name: name
+            id: id
+            users:
+            - userId: userId
+              username: username
+            - userId: userId
+              username: username
+          - name: name
+            id: id
+            users:
+            - userId: userId
+              username: username
+            - userId: userId
+              username: username
+          tenantCode: tenantCode
+          message: message
+          status: Unknown
+        - assignments:
+          - name: name
+            id: id
+            users:
+            - userId: userId
+              username: username
+            - userId: userId
+              username: username
+          - name: name
+            id: id
+            users:
+            - userId: userId
+              username: username
+            - userId: userId
+              username: username
+          tenantCode: tenantCode
+          message: message
+          status: Unknown
+      properties:
+        tenants:
+          description: A list of objects representing the tenants and users that were
+            assigned to or removed from user groups.
+          items:
+            $ref: '#/components/schemas/TenantAssignmentsDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    SimpleUserDTO:
+      example:
+        userId: userId
+        username: username
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@visier.com."
+          type: string
+      type: object
+    Status:
+      description: "The `Status` type defines a logical error model that is suitable\
+        \ for different programming environments, including REST APIs and RPC APIs.\
+        \ It is used by [gRPC](https://github.com/grpc). Each `Status` message contains\
+        \ three pieces of data: error code, error message, and error details. You\
+        \ can find out more about this error model and how to work with it in the\
+        \ [API Design Guide](https://cloud.google.com/apis/design/errors)."
+      properties:
+        code:
+          description: "The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code]."
+          format: int32
+          type: integer
+        message:
+          description: "A developer-facing error message, which should be in English.\
+            \ Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details]\
+            \ field, or localized by the client."
+          type: string
+        details:
+          description: A list of messages that carry the error details.  There is
+            a common set of message types for APIs to use.
+          items:
+            $ref: '#/components/schemas/GoogleProtobufAny'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    TenantAssignmentsDTO:
+      example:
+        assignments:
+        - name: name
+          id: id
+          users:
+          - userId: userId
+            username: username
+          - userId: userId
+            username: username
+        - name: name
+          id: id
+          users:
+          - userId: userId
+            username: username
+          - userId: userId
+            username: username
+        tenantCode: tenantCode
+        message: message
+        status: Unknown
+      properties:
+        tenantCode:
+          description: The unique identifier associated with the tenant.
+          type: string
+        status:
+          description: The state of the user group assignment. Valid values are Succeed
+            or Failed.
+          enum:
+          - Unknown
+          - Succeed
+          - Failed
+          format: enum
+          type: string
+        message:
+          description: "A detailed description of the request outcome, if available."
+          type: string
+        assignments:
+          description: A list of objects representing the user group and user assignments.
+          items:
+            $ref: '#/components/schemas/UserSecurityAssignmentsDTO'
+          type: array
+      type: object
+    UserCreationAPIRequestDTO:
+      example:
+        displayName: displayName
+        employeeId: employeeId
+        accountEnabled: accountEnabled
+        email: email
+        username: username
+      properties:
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@visier.com."
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If false, the user account is disabled."
+          type: string
+        email:
+          description: "The user's email. This is used if the user's email is different\
+            \ from their username. For example, \"john.doe@visier.com\"."
+          type: string
+      type: object
+    UserCreationAPIResponseDTO:
+      example:
+        displayName: displayName
+        employeeId: employeeId
+        userId: userId
+        accountEnabled: accountEnabled
+        email: email
+        username: username
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@jupiter.com."
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If true, the user account is enabled."
+          type: string
+        email:
+          description: The user's email address.
+          type: string
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    UserGetAPIResponseDTO:
+      example:
+        userGroups:
+          assignedUserGroups:
+          - userGroupId: userGroupId
+            displayName: displayName
+          - userGroupId: userGroupId
+            displayName: displayName
+        lastLogin:
+          timestamp: timestamp
+        displayName: displayName
+        permissions:
+          assignedPermissions:
+          - permissionId: permissionId
+            displayName: displayName
+            description: description
+          - permissionId: permissionId
+            displayName: displayName
+            description: description
+        profiles:
+          assignedProfiles:
+          - capabilities:
+            - capability: capability
+              accessLevel: accessLevel
+              viewLevel: viewLevel
+            - capability: capability
+              accessLevel: accessLevel
+              viewLevel: viewLevel
+            profileId: profileId
+            displayName: displayName
+            validityEndTime: validityEndTime
+            validityStartTime: validityStartTime
+            additionalCapabilities:
+              additionalCapabilities:
+              - additionalCapabilities
+              - additionalCapabilities
+          - capabilities:
+            - capability: capability
+              accessLevel: accessLevel
+              viewLevel: viewLevel
+            - capability: capability
+              accessLevel: accessLevel
+              viewLevel: viewLevel
+            profileId: profileId
+            displayName: displayName
+            validityEndTime: validityEndTime
+            validityStartTime: validityStartTime
+            additionalCapabilities:
+              additionalCapabilities:
+              - additionalCapabilities
+              - additionalCapabilities
+        employeeId: employeeId
+        userId: userId
+        accountEnabled: true
+        email: email
+        username: username
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@jupiter.com."
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If false, the user account is disabled."
+          type: boolean
+        profiles:
+          $ref: '#/components/schemas/AllProfileAssignedForLocalTenantDTO'
+        permissions:
+          $ref: '#/components/schemas/AllPermissionsAssignedForLocalTenantDTO'
+        userGroups:
+          $ref: '#/components/schemas/AllUserGroupsAssignedForLocalTenantDTO'
+        lastLogin:
+          $ref: '#/components/schemas/LastLoginDTO'
+        email:
+          description: The user's email address.
+          type: string
+      type: object
+      x-konfig-properties:
+        profiles:
+          description: A list of objects representing the list of available profiles.
+        permissions:
+          description: A list of objects representing the user's permissions.
+        userGroups:
+          description: A list of objects representing the available user groups.
+        lastLogin:
+          description: An object that represents the time that the user last logged
+            into Visier.
+      x-konfig-is-used-in-successful-response: true
+    UserGroupAssignedForLocalTenantDTO:
+      example:
+        userGroupId: userGroupId
+        displayName: displayName
+      properties:
+        userGroupId:
+          description: The user group ID.
+          type: string
+        displayName:
+          description: "An identifiable user group name to display in Visier, such\
+            \ as \"Leadership User Group\"."
+          type: string
+      type: object
+    UserGroupGetAPIResponseDTO:
+      example:
+        userGroupId: userGroupId
+        displayName: displayName
+        permissions:
+        - permissionId: permissionId
+          displayName: displayName
+        - permissionId: permissionId
+          displayName: displayName
+      properties:
+        userGroupId:
+          description: The unique identifier associated with the user group.
+          type: string
+        displayName:
+          description: "An identifiable user group name to display in Visier, such\
+            \ as \"Leadership User Group\"."
+          type: string
+        permissions:
+          description: A list of objects representing the user's permissions.
+          items:
+            $ref: '#/components/schemas/PermissionResponseDTO'
+          type: array
+      type: object
+    UserGroupsGetAPIResponseDTO:
+      example:
+        userGroups:
+        - userGroupId: userGroupId
+          displayName: displayName
+          permissions:
+          - permissionId: permissionId
+            displayName: displayName
+          - permissionId: permissionId
+            displayName: displayName
+        - userGroupId: userGroupId
+          displayName: displayName
+          permissions:
+          - permissionId: permissionId
+            displayName: displayName
+          - permissionId: permissionId
+            displayName: displayName
+        limit: 0
+        start: 6
+      properties:
+        userGroups:
+          description: A list of user groups.
+          items:
+            $ref: '#/components/schemas/UserGroupGetAPIResponseDTO'
+          type: array
+        limit:
+          description: The number of results to return. The maximum number of users
+            to retrieve is 1000.
+          format: uint32
+          type: integer
+        start:
+          description: "The index to start retrieving results from, also known as\
+            \ offset."
+          format: uint32
+          type: integer
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    UserGroupsUsersDTO:
+      example:
+        tenants:
+        - tenantCode: tenantCode
+          users:
+          - userId: userId
+            username: username
+          - userId: userId
+            username: username
+        - tenantCode: tenantCode
+          users:
+          - userId: userId
+            username: username
+          - userId: userId
+            username: username
+        limit: 0
+        start: 6
+      properties:
+        tenants:
+          description: "A list of objects representing the users that are explicitly\
+            \ assigned to the user group, organized by the tenants the users belong\
+            \ to."
+          items:
+            $ref: '#/components/schemas/UserGroupsUsersForTenantDTO'
+          type: array
+        limit:
+          description: The limit of results to return. The maximum value is 1000.
+          format: uint32
+          type: integer
+        start:
+          description: "The index to start retrieving values from, also known as offset.\
+            \ The index begins at 0."
+          format: uint32
+          type: integer
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    UserGroupsUsersForTenantDTO:
+      example:
+        tenantCode: tenantCode
+        users:
+        - userId: userId
+          username: username
+        - userId: userId
+          username: username
+      properties:
+        tenantCode:
+          description: The unique identifier associated with the tenant.
+          type: string
+        users:
+          description: A list of objects representing the users in the user group.
+          items:
+            $ref: '#/components/schemas/SimpleUserDTO'
+          type: array
+      type: object
+    UserSecurityAssignmentsDTO:
+      example:
+        name: name
+        id: id
+        users:
+        - userId: userId
+          username: username
+        - userId: userId
+          username: username
+      properties:
+        id:
+          description: The unique identifier associated with the user group.
+          type: string
+        name:
+          description: The name of the user group.
+          type: string
+        users:
+          description: A list of objects representing the users assigned to or removed
+            from the user group.
+          items:
+            $ref: '#/components/schemas/SimpleUserDTO'
+          type: array
+      type: object
+    UserUpdateAPIRequestDTO:
+      example:
+        displayName: displayName
+        employeeId: employeeId
+        accountEnabled: accountEnabled
+        email: email
+      properties:
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If true, the user account is enabled."
+          type: string
+        email:
+          description: The user's email address.
+          type: string
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    UsersAPIErrorMessageDTO:
+      example:
+        rci: rci
+        message: message
+      properties:
+        message:
+          description: Error message
+          type: string
+        rci:
+          description: The unique identifier associated to this error
+          type: string
+      type: object
+    UsersAPIFailureDTO:
+      example:
+        displayName: displayName
+        userName: userName
+        error:
+          rci: rci
+          message: message
+        userId: userId
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        userName:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@jupiter.com."
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        error:
+          $ref: '#/components/schemas/UsersAPIErrorMessageDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The error thrown during creation.
+    UsersAPIResponseDTO:
+      example:
+        failures:
+        - displayName: displayName
+          userName: userName
+          error:
+            rci: rci
+            message: message
+          userId: userId
+        - displayName: displayName
+          userName: userName
+          error:
+            rci: rci
+            message: message
+          userId: userId
+        successes:
+        - displayName: displayName
+          employeeId: employeeId
+          userId: userId
+          accountEnabled: accountEnabled
+          email: email
+          username: username
+        - displayName: displayName
+          employeeId: employeeId
+          userId: userId
+          accountEnabled: accountEnabled
+          email: email
+          username: username
+      properties:
+        successes:
+          description: The users for which the request succeeded.
+          items:
+            $ref: '#/components/schemas/UsersAPISuccessDTO'
+          type: array
+        failures:
+          description: The users for which the request failed.
+          items:
+            $ref: '#/components/schemas/UsersAPIFailureDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    UsersAPISuccessDTO:
+      example:
+        displayName: displayName
+        employeeId: employeeId
+        userId: userId
+        accountEnabled: accountEnabled
+        email: email
+        username: username
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@jupiter.com."
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If true, the user account is enabled."
+          type: string
+        email:
+          description: The user's email address.
+          type: string
+      type: object
+    UsersCreationAPIRequestDTO:
+      example:
+        users:
+        - displayName: displayName
+          employeeId: employeeId
+          accountEnabled: accountEnabled
+          email: email
+          username: username
+        - displayName: displayName
+          employeeId: employeeId
+          accountEnabled: accountEnabled
+          email: email
+          username: username
+      properties:
+        users:
+          description: A list of objects representing users to create.
+          items:
+            $ref: '#/components/schemas/UserCreationAPIRequestDTO'
+          type: array
+      type: object
+    UsersDeleteAPIRequestDTO:
+      example:
+        userIds:
+        - userIds
+        - userIds
+      properties:
+        userIds:
+          description: A list of objects representing users to delete.
+          items:
+            type: string
+          type: array
+      type: object
+    UsersToUserGroupRequestDTO:
+      example:
+        userGroupId: userGroupId
+        userIds:
+        - userIds
+        - userIds
+      properties:
+        userGroupId:
+          description: The unique identifier associated with the user group.
+          type: string
+        userIds:
+          description: A list of strings representing unique user IDs to assign to
+            or remove from the user group.
+          items:
+            type: string
+          type: array
+      type: object
+    UsersToUserGroupsRequestDTO:
+      example:
+        userGroups:
+        - userGroupId: userGroupId
+          userIds:
+          - userIds
+          - userIds
+        - userGroupId: userGroupId
+          userIds:
+          - userIds
+          - userIds
+      properties:
+        userGroups:
+          description: A list of objects representing the user groups and users to
+            assign or remove.
+          items:
+            $ref: '#/components/schemas/UsersToUserGroupRequestDTO'
+          type: array
+      type: object
+    UsersUpdateAPIRequestDTO:
+      example:
+        users:
+        - displayName: displayName
+          employeeId: employeeId
+          userId: userId
+          accountEnabled: accountEnabled
+          email: email
+        - displayName: displayName
+          employeeId: employeeId
+          userId: userId
+          accountEnabled: accountEnabled
+          email: email
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/UsersUpdateAPIUserDTO'
+          type: array
+      type: object
+    UsersUpdateAPIUserDTO:
+      example:
+        displayName: displayName
+        employeeId: employeeId
+        userId: userId
+        accountEnabled: accountEnabled
+        email: email
+      properties:
+        userId:
+          description: The unique identifier associated with the user.
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If true, the user account is enabled."
+          type: string
+        email:
+          description: The user's email address.
+          type: string
+      type: object
+    UserManagementGetApplicationLogsXlsxResponse:
+      format: binary
+      type: string
+      x-konfig-is-used-in-successful-response: true
+    UserManagementGetDataSecurityReportXlsxResponse:
+      format: binary
+      type: string
+      x-konfig-is-used-in-successful-response: true
+    UserManagementGetProfileAssignmentsXlsxResponse:
+      format: binary
+      type: string
+      x-konfig-is-used-in-successful-response: true
+    UserManagementGetUserPermissionsXlsxResponse:
+      format: binary
+      type: string
+      x-konfig-is-used-in-successful-response: true
+    UserManagementGetAllPermissionsXlsxResponse:
+      format: binary
+      type: string
+      x-konfig-is-used-in-successful-response: true
+    konfig-generated-schema-single-parameter-schema-delete--v1-admin-permissions-users:
+      properties:
+        permissions:
+          description: A list of objects representing the permissions to assign to
+            or remove from users.
+          items:
+            $ref: '#/components/schemas/Permission'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-put--v1-admin-permissions-users:
+      properties:
+        permissions:
+          description: A list of objects representing the permissions to assign to
+            or remove from users.
+          items:
+            $ref: '#/components/schemas/Permission'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-permissions-permissionId-users:
+      properties:
+        permissionId:
+          type: string
+        includeUserGroups:
+          type: boolean
+        tenantFilter:
+          type: string
+        limit:
+          format: int32
+          type: integer
+        start:
+          format: int32
+          type: integer
+      required:
+      - permissionId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - permissionId
+      - includeUserGroups
+      - tenantFilter
+      - limit
+      - start
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-user-groups:
+      properties:
+        tenantCode:
+          type: string
+        limit:
+          format: uint32
+          type: integer
+        start:
+          format: uint32
+          type: integer
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+      - limit
+      - start
+    konfig-generated-schema-single-parameter-schema-delete--v1-admin-user-groups-permissions:
+      properties:
+        userGroups:
+          description: A list of objects representing the user groups and permissions
+            to assign or remove.
+          items:
+            $ref: '#/components/schemas/PermissionsToUserGroupRequestDTO'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-put--v1-admin-user-groups-permissions:
+      properties:
+        userGroups:
+          description: A list of objects representing the user groups and permissions
+            to assign or remove.
+          items:
+            $ref: '#/components/schemas/PermissionsToUserGroupRequestDTO'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-delete--v1-admin-user-groups-users:
+      properties:
+        userGroups:
+          description: A list of objects representing the user groups and users to
+            assign or remove.
+          items:
+            $ref: '#/components/schemas/UsersToUserGroupRequestDTO'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-put--v1-admin-user-groups-users:
+      properties:
+        userGroups:
+          description: A list of objects representing the user groups and users to
+            assign or remove.
+          items:
+            $ref: '#/components/schemas/UsersToUserGroupRequestDTO'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-user-groups-userGroupId-users:
+      properties:
+        userGroupId:
+          type: string
+        tenantFilter:
+          type: string
+        limit:
+          format: uint32
+          type: integer
+        start:
+          format: uint32
+          type: integer
+      required:
+      - userGroupId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userGroupId
+      - tenantFilter
+      - limit
+      - start
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users:
+      properties:
+        tenantCode:
+          type: string
+        assignedProfiles:
+          type: boolean
+        assignedPermissions:
+          type: boolean
+        assignedUserGroups:
+          type: boolean
+        limit:
+          format: uint32
+          type: integer
+        start:
+          format: uint32
+          type: integer
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+      - assignedProfiles
+      - assignedPermissions
+      - assignedUserGroups
+      - limit
+      - start
+    konfig-generated-schema-single-parameter-schema-post--v1-admin-users:
+      properties:
+        tenantCode:
+          type: string
+        username:
+          description: "The user's username. This is typically the user's email, such\
+            \ as john@visier.com."
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If false, the user account is disabled."
+          type: string
+        email:
+          description: "The user's email. This is used if the user's email is different\
+            \ from their username. For example, \"john.doe@visier.com\"."
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-delete--v1-admin-users-userId:
+      properties:
+        userId:
+          type: string
+        tenantCode:
+          type: string
+      required:
+      - userId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userId
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId:
+      properties:
+        userId:
+          type: string
+        tenantCode:
+          type: string
+        assignedProfiles:
+          type: boolean
+        assignedPermissions:
+          type: boolean
+        assignedUserGroups:
+          type: boolean
+      required:
+      - userId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userId
+      - tenantCode
+      - assignedProfiles
+      - assignedPermissions
+      - assignedUserGroups
+    konfig-generated-schema-single-parameter-schema-put--v1-admin-users-userId:
+      properties:
+        userId:
+          type: string
+        tenantCode:
+          type: string
+        displayName:
+          description: "An identifiable name to display within Visier. For example,\
+            \ \"John Smith\"."
+          type: string
+        employeeId:
+          description: "If applicable, and if available, the user employee ID in the\
+            \ data."
+          type: string
+        accountEnabled:
+          description: "If true, the user account is enabled."
+          type: string
+        email:
+          description: The user's email address.
+          type: string
+      required:
+      - userId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userId
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-delete--v2-admin-users:
+      properties:
+        tenantCode:
+          type: string
+        userIds:
+          description: A list of objects representing users to delete.
+          items:
+            type: string
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-post--v2-admin-users:
+      properties:
+        tenantCode:
+          type: string
+        users:
+          description: A list of objects representing users to create.
+          items:
+            $ref: '#/components/schemas/UserCreationAPIRequestDTO'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-put--v2-admin-users:
+      properties:
+        tenantCode:
+          type: string
+        users:
+          items:
+            $ref: '#/components/schemas/UsersUpdateAPIUserDTO'
+          type: array
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-application-logs:
+      properties:
+        startTime:
+          type: string
+        endTime:
+          type: string
+        tenantCode:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - startTime
+      - endTime
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId-reports-data-security:
+      properties:
+        userId:
+          type: string
+        tenantCode:
+          type: string
+      required:
+      - userId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userId
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-profile-assignments:
+      properties:
+        tenantCode:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-permission-assignments:
+      properties:
+        tenantCode:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-reports-permissions-list:
+      properties:
+        tenantCode:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - tenantCode
+  securitySchemes:
+    CookieAuth:
+      in: cookie
+      name: VisierASIDToken
+      type: apiKey
+      x-konfig-globally-required-security: false
+    ApiKeyAuth:
+      in: header
+      name: apikey
+      type: apiKey
+      x-konfig-globally-required-security: true
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-konfig-globally-required-security: false
+    OAuth2Auth:
+      flows:
+        authorizationCode:
+          authorizationUrl: /v1/auth/oauth2/authorize
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          tokenUrl: /v1/auth/oauth2/token
+        password:
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          tokenUrl: /v1/auth/oauth2/token
+      type: oauth2
+      x-konfig-globally-required-security: false
+
